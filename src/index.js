@@ -30,7 +30,6 @@ loader.load(
       uniforms: {
         texture: { value: texture },
         time: { value: 0.0 },
-        delta: { value: 0.0 },
         mouse: { value: new THREE.Vector2(0, 0) },
         radius: { value: 0.75 },
         intersects: { value: 0.0 },

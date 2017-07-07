@@ -13,7 +13,7 @@ const raycaster = new THREE.Raycaster()
 let image = null
 
 const mouse = new THREE.Vector2()
-let time = Date.now()
+let time = 0
 
 const renderer = new THREE.WebGLRenderer({
   antialias: true,
@@ -39,6 +39,7 @@ loader.load(
         mouse: { value: new THREE.Vector2(0, 0) },
         radius: { value: 0.75 },
         intersects: { value: 0.0 },
+        powerVert: { value: 2.0 },
         powerR: { value: 0.0 },
         powerG: { value: 0.0 },
         powerB: { value: 0.0 }
@@ -59,15 +60,17 @@ loader.load(
 
 const controller = {
   maxDeltaTime: 300,
-  powerR: 1.2,
-  powerG: 1.015,
-  powerB: 0.93
+  powerVert: 2.0,
+  powerR: 0.35,
+  powerG: 0.1,
+  powerB: 0.25
 }
 const gui = new dat.GUI()
 gui.add(controller, 'maxDeltaTime', 100, 1000)
-gui.add(controller, 'powerR', 0.5, 1.5)
-gui.add(controller, 'powerG', 0.5, 1.5)
-gui.add(controller, 'powerB', 0.5, 1.5)
+gui.add(controller, 'powerVert', 0.1, 10.0)
+gui.add(controller, 'powerR', 0.01, 1.0)
+gui.add(controller, 'powerG', 0.01, 1.0)
+gui.add(controller, 'powerB', 0.01, 1.0)
 
 // function clamp (value, min, max) {
 //   return Math.min(Math.max(value, min), max)
@@ -80,7 +83,6 @@ gui.add(controller, 'powerB', 0.5, 1.5)
 function computeMouse (event) {
   mouse.x = ((event.clientX / window.innerWidth) * 2) - 1
   mouse.y = -((event.clientY / window.innerHeight) * 2) + 1
-  time = Date.now()
 }
 
 function animate () {
@@ -90,24 +92,22 @@ function animate () {
 
   scene.children.forEach((child) => {
     child.material.uniforms.intersects.value = 0.0
-    child.rotation.x = 0
-    child.rotation.y = 0
   })
 
   const intersects = raycaster.intersectObjects(scene.children)
   intersects.forEach(({ object, uv }) => {
     object.material.uniforms.mouse.value = uv
     object.material.uniforms.intersects.value = 1.0
-    object.rotation.x = (mouse.x * 0.1)
-    object.rotation.y = (mouse.y * 0.1)
   })
 
-  image && (image.material.uniforms.millis.value = Date.now())
+  image && (image.material.uniforms.millis.value = time / 25000)
 
+  image && (image.material.uniforms.powerVert.value = controller.powerVert)
   image && (image.material.uniforms.powerR.value = controller.powerR)
   image && (image.material.uniforms.powerG.value = controller.powerG)
   image && (image.material.uniforms.powerB.value = controller.powerB)
 
+  ++time
   stats.end()
   renderer.render(scene, camera)
 }

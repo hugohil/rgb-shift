@@ -16,13 +16,18 @@ uniform float powerG;
 uniform float powerB;
 
 float computeNoise (float power) {
-  return pnoise(vUv, mouse * power) * pnoise(vUv, vec2(millis * (power * 0.0000125)));
+  return pnoise(vUv, mouse * power) * pnoise(mouse, vec2(millis + power));
+}
+
+float computeTurbulence (float p) {
+  float power = pow(millis, p);
+  return computeNoise(pnoise(vec2(power * p), mouse) / power);
 }
 
 void main () {
-  vec2 offsetR = vUv + (computeNoise(powerR) * intersects);
-  vec2 offsetG = vUv + (computeNoise(powerG) * intersects);
-  vec2 offsetB = vUv + (computeNoise(powerB) * intersects);
+  vec2 offsetR = vUv + (computeTurbulence(powerR) * intersects);
+  vec2 offsetG = vUv + (computeTurbulence(powerG) * intersects);
+  vec2 offsetB = vUv + (computeTurbulence(powerB) * intersects);
 
   float r = texture2D(texture, offsetR).r;
   float g = texture2D(texture, offsetG).g;

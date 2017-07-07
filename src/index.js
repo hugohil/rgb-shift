@@ -3,6 +3,8 @@
 require('./vendors/dat.gui.css')
 const dat = require('./vendors/dat.gui.min')
 
+const Stats = require('./vendors/stats.min')
+
 const THREE = require('three')
 const scene = new THREE.Scene()
 const camera = new THREE.PerspectiveCamera(75, (window.innerWidth / window.innerHeight), 0.1, 1000)
@@ -19,6 +21,10 @@ const renderer = new THREE.WebGLRenderer({
 })
 renderer.setSize(window.innerWidth, window.innerHeight)
 document.body.appendChild(renderer.domElement)
+
+const stats = new Stats()
+// stats.showPanel(1) // 0: fps, 1: ms, 2: mb, 3+: custom
+document.body.appendChild(stats.dom)
 
 const loader = new THREE.TextureLoader()
 loader.crossOrigin = 'anonymous'
@@ -78,6 +84,7 @@ function computeMouse (event) {
 }
 
 function animate () {
+  stats.begin()
   window.requestAnimationFrame(animate)
   raycaster.setFromCamera(mouse, camera)
 
@@ -101,6 +108,7 @@ function animate () {
   image && (image.material.uniforms.powerG.value = controller.powerG)
   image && (image.material.uniforms.powerB.value = controller.powerB)
 
+  stats.end()
   renderer.render(scene, camera)
 }
 animate()

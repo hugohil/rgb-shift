@@ -40,7 +40,7 @@ loader.load(
       fragmentShader: require('./rgb-shift.glsl'),
       vertexShader: require('./vert.glsl')
     })
-    const plane = new THREE.PlaneGeometry((10 * ratio), 10, 64, 64)
+    const plane = new THREE.PlaneGeometry((10 * ratio), 10, 128, 128)
     image = new THREE.Mesh(plane, material)
     image.position.z = -10
     scene.add(image)

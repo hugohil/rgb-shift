@@ -29,7 +29,7 @@ loader.load(
     const material = new THREE.ShaderMaterial({
       uniforms: {
         texture: { value: texture },
-        time: { value: 0.0 },
+        millis: { value: 0.0 },
         mouse: { value: new THREE.Vector2(0, 0) },
         radius: { value: 0.75 },
         intersects: { value: 0.0 },
@@ -44,7 +44,7 @@ loader.load(
     image = new THREE.Mesh(plane, material)
     image.position.z = -10
     scene.add(image)
-    renderer.domElement.addEventListener('mousemove', computeMouse)
+    renderer.domElement.addEventListener('pointermove', computeMouse)
   },
   (xhr) => {},
   (xhr) => {
@@ -63,13 +63,13 @@ gui.add(controller, 'powerR', 0.5, 1.5)
 gui.add(controller, 'powerG', 0.5, 1.5)
 gui.add(controller, 'powerB', 0.5, 1.5)
 
-function clamp (value, min, max) {
-  return Math.min(Math.max(value, min), max)
-}
+// function clamp (value, min, max) {
+//   return Math.min(Math.max(value, min), max)
+// }
 
-function map (value, inMin, inMax, outMin, outMax) {
-  return outMin + (outMax - outMin) * (value - inMin) / (inMax - inMin)
-}
+// function map (value, inMin, inMax, outMin, outMax) {
+//   return outMin + (outMax - outMin) * (value - inMin) / (inMax - inMin)
+// }
 
 function computeMouse (event) {
   mouse.x = ((event.clientX / window.innerWidth) * 2) - 1
@@ -83,15 +83,19 @@ function animate () {
 
   scene.children.forEach((child) => {
     child.material.uniforms.intersects.value = 0.0
+    child.rotation.x = 0
+    child.rotation.y = 0
   })
 
   const intersects = raycaster.intersectObjects(scene.children)
   intersects.forEach(({ object, uv }) => {
     object.material.uniforms.mouse.value = uv
     object.material.uniforms.intersects.value = 1.0
+    object.rotation.x = (mouse.x * 0.1)
+    object.rotation.y = (mouse.y * 0.1)
   })
 
-  image && (image.material.uniforms.time.value = Date.now())
+  image && (image.material.uniforms.millis.value = Date.now())
 
   image && (image.material.uniforms.powerR.value = controller.powerR)
   image && (image.material.uniforms.powerG.value = controller.powerG)

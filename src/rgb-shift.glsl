@@ -9,14 +9,14 @@ varying vec3 vNormal;
 uniform sampler2D texture;
 uniform vec2 mouse;
 uniform float radius;
-uniform float time;
+uniform float millis;
 uniform float intersects;
 uniform float powerR;
 uniform float powerG;
 uniform float powerB;
 
 float computeNoise (float power) {
-  return pnoise(vUv, mouse * power) * pnoise(vUv, vec2(time * (power * 0.0000125)));
+  return pnoise(vUv, mouse * power) * pnoise(vUv, vec2(millis * (power * 0.0000125)));
 }
 
 void main () {

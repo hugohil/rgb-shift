@@ -33,7 +33,10 @@ loader.load(
         delta: { value: 0.0 },
         mouse: { value: new THREE.Vector2(0, 0) },
         radius: { value: 0.75 },
-        intersects: { value: 0.0 }
+        intersects: { value: 0.0 },
+        powerR: { value: 0.0 },
+        powerG: { value: 0.0 },
+        powerB: { value: 0.0 }
       },
       fragmentShader: require('./rgb-shift.glsl'),
       vertexShader: require('./vert.glsl')
@@ -50,10 +53,16 @@ loader.load(
   })
 
 const controller = {
-  maxDeltaTime: 300
+  maxDeltaTime: 300,
+  powerR: 1.2,
+  powerG: 1.015,
+  powerB: 0.93
 }
 const gui = new dat.GUI()
 gui.add(controller, 'maxDeltaTime', 100, 1000)
+gui.add(controller, 'powerR', 0.5, 1.5)
+gui.add(controller, 'powerG', 0.5, 1.5)
+gui.add(controller, 'powerB', 0.5, 1.5)
 
 function clamp (value, min, max) {
   return Math.min(Math.max(value, min), max)
@@ -84,6 +93,10 @@ function animate () {
   })
 
   image && (image.material.uniforms.time.value = Date.now())
+
+  image && (image.material.uniforms.powerR.value = controller.powerR)
+  image && (image.material.uniforms.powerG.value = controller.powerG)
+  image && (image.material.uniforms.powerB.value = controller.powerB)
 
   renderer.render(scene, camera)
 }

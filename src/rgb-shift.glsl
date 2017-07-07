@@ -11,18 +11,22 @@ uniform vec2 mouse;
 uniform float radius;
 uniform float time;
 uniform float intersects;
+uniform float powerR;
+uniform float powerG;
+uniform float powerB;
 
-float computeNoise () {
-  return pnoise(vUv, mouse) * pnoise(vUv, vec2(time * .0000025));
+float computeNoise (float power) {
+  return pnoise(vUv, mouse * power) * pnoise(vUv, vec2(time * (power * 0.0000125)));
 }
 
 void main () {
-  float noise = computeNoise() * intersects;
-  vec2 offset = vUv + noise;
+  vec2 offsetR = vUv + (computeNoise(powerR) * intersects);
+  vec2 offsetG = vUv + (computeNoise(powerG) * intersects);
+  vec2 offsetB = vUv + (computeNoise(powerB) * intersects);
 
-  float r = texture2D(texture, offset).r;
-  float g = texture2D(texture, vUv).g;
-  float b = texture2D(texture, vUv).b;
+  float r = texture2D(texture, offsetR).r;
+  float g = texture2D(texture, offsetG).g;
+  float b = texture2D(texture, offsetB).b;
 
   gl_FragColor = vec4(r, g, b, 1.);
 }

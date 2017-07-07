@@ -13,7 +13,7 @@ uniform float time;
 uniform float intersects;
 
 float computeNoise () {
-  return pnoise(vUv, mouse) * pnoise(vUv, vec2(time * .000000002));
+  return pnoise(vUv, mouse) * pnoise(vUv, vec2(time * .0000025));
 }
 
 void main () {

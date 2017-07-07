@@ -10,6 +10,7 @@
   "author": "",
   "license": "MIT",
   "dependencies": {
+    "glsl-noise": "^0.0.0",
     "glslify": "^6.1.0",
     "three": "^0.86.0"
   },

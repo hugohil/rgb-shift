@@ -1,3 +1,5 @@
+#pragma glslify: pnoise = require('glsl-noise/periodic/2d')
+
 precision highp float;
 
 varying vec2 vUv;
@@ -5,38 +7,22 @@ varying vec3 vPosition;
 varying vec3 vNormal;
 
 uniform sampler2D texture;
-uniform float impulseRX;
-uniform float impulseRY;
-uniform float impulseGX;
-uniform float impulseGY;
-uniform float impulseBX;
-uniform float impulseBY;
-uniform vec2 mousePosition;
-uniform float shiftRadius;
-uniform float delta;
+uniform vec2 mouse;
+uniform float radius;
+uniform float time;
+uniform float intersects;
 
-float map(float value, float inMin, float inMax, float outMin, float outMax) {
-  return outMin + (outMax - outMin) * (value - inMin) / (inMax - inMin);
+float computeNoise () {
+  return pnoise(vUv, mouse) * pnoise(vUv, vec2(time * .000000002));
 }
 
 void main () {
-  float diffX = map(vUv.x, 0.0, mousePosition.x, 0.0, shiftRadius);
-  float diffY = map(vUv.y, 0.0, mousePosition.y, 0.0, shiftRadius);
+  float noise = computeNoise() * intersects;
+  vec2 offset = vUv + noise;
 
-  float offsetRX = diffX * delta * impulseRX;
-  float offsetRY = diffY * delta * impulseRY;
-  float offsetGX = diffX * delta * impulseGX;
-  float offsetGY = diffY * delta * impulseGY;
-  float offsetBX = diffX * delta * impulseBX;
-  float offsetBY = diffY * delta * impulseBY;
+  float r = texture2D(texture, offset).r;
+  float g = texture2D(texture, vUv).g;
+  float b = texture2D(texture, vUv).b;
 
-  vec2 ROffset = vec2(vUv.x + offsetRX, vUv.y + offsetRY);
-  vec2 GOffset = vec2(vUv.x + offsetGX, vUv.y + offsetGY);
-  vec2 BOffset = vec2(vUv.x + offsetBX, vUv.y + offsetBY);
-
-  float r = texture2D(texture, ROffset).r;
-  float g = texture2D(texture, GOffset).g;
-  float b = texture2D(texture, BOffset).b;
-
-  gl_FragColor = vec4(r, g, b, 1.0);
+  gl_FragColor = vec4(r, g, b, 1.);
 }

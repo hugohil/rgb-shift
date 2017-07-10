@@ -4,28 +4,26 @@ varying vec2 vUv;
 varying vec3 vNormal;
 varying vec3 vPosition;
 
+uniform sampler2D texture;
 uniform vec2 mouse;
 uniform float millis;
 uniform float powerVert;
 uniform float intersects;
-
-float computeNoise (float power) {
-  return pnoise(position.xy * .75, mouse * power) * pnoise(mouse, vec2(millis + power));
-}
-
-float computeTurbulence (float p) {
-  float power = pow(millis, p);
-  return computeNoise(pnoise(vec2(power * p), vec2(millis)) / power);
-}
 
 void main () {
   vPosition = position;
   vUv = uv;
   vNormal = normal;
 
-  float noise = computeTurbulence(powerVert) * intersects;
-  vec3 pos = position + normal * noise;
-  pos.z *= 2.;
+  vec4 color = texture2D(texture, vUv);
+
+  //convert to grayscale using NTSC conversion weights
+  float gray = dot(color.rgb, vec3(.299, .587, .114));
+
+  // vec3 pos = position + normal * (gray * intersects);
+  vec3 pos = position + normal * gray;
+  pos.z *= clamp(millis, .0, 15.);
+  // vec3 pos = position + normal;
 
   gl_Position = projectionMatrix * modelViewMatrix * vec4(pos, 1.);
 }

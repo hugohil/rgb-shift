@@ -15,23 +15,25 @@ uniform float powerR;
 uniform float powerG;
 uniform float powerB;
 
-float computeNoise (float power) {
-  return pnoise(vUv, mouse * power) * pnoise(mouse, vec2(millis + power));
-}
-
 float computeTurbulence (float p) {
   float power = pow(millis, p);
-  return computeNoise(pnoise(vec2(power * p), mouse) / power);
+  return pnoise(vec2(power * p), vec2(millis)) / power;
 }
 
 void main () {
-  vec2 offsetR = vUv + (computeTurbulence(powerR) * intersects);
-  vec2 offsetG = vUv + (computeTurbulence(powerG) * intersects);
-  vec2 offsetB = vUv + (computeTurbulence(powerB) * intersects);
+  // vec2 offsetR = vUv + (computeTurbulence(powerR) * intersects);
+  // vec2 offsetG = vUv + (computeTurbulence(powerG) * intersects);
+  // vec2 offsetB = vUv + (computeTurbulence(powerB) * intersects);
+  vec2 offsetR = vUv;
+  vec2 offsetG = vUv;
+  vec2 offsetB = vUv;
 
   float r = texture2D(texture, offsetR).r;
   float g = texture2D(texture, offsetG).g;
   float b = texture2D(texture, offsetB).b;
 
   gl_FragColor = vec4(r, g, b, 1.);
+
+  // vec4 color = texture2D(texture, vUv);
+  // gl_FragColor = color;
 }

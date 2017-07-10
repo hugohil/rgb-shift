@@ -44,12 +44,13 @@ loader.load(
         powerG: { value: 0.0 },
         powerB: { value: 0.0 }
       },
+      side: THREE.DoubleSide,
       fragmentShader: require('./rgb-shift.glsl'),
       vertexShader: require('./vert.glsl')
     })
     const plane = new THREE.PlaneGeometry((10 * ratio), 10, 128, 128)
     image = new THREE.Mesh(plane, material)
-    image.position.z = -10
+    image.position.z = -15
     scene.add(image)
     renderer.domElement.addEventListener('pointermove', computeMouse)
   },
@@ -61,16 +62,16 @@ loader.load(
 const controller = {
   maxDeltaTime: 300,
   powerVert: 2.0,
-  powerR: 0.35,
-  powerG: 0.1,
-  powerB: 0.25
+  powerR: 0.8,
+  powerG: 0.9,
+  powerB: 0.85
 }
 const gui = new dat.GUI()
 gui.add(controller, 'maxDeltaTime', 100, 1000)
 gui.add(controller, 'powerVert', 0.1, 10.0)
-gui.add(controller, 'powerR', 0.01, 1.0)
-gui.add(controller, 'powerG', 0.01, 1.0)
-gui.add(controller, 'powerB', 0.01, 1.0)
+gui.add(controller, 'powerR', 0.01, 2.0)
+gui.add(controller, 'powerG', 0.01, 2.0)
+gui.add(controller, 'powerB', 0.01, 2.0)
 
 // function clamp (value, min, max) {
 //   return Math.min(Math.max(value, min), max)
@@ -90,17 +91,26 @@ function animate () {
   window.requestAnimationFrame(animate)
   raycaster.setFromCamera(mouse, camera)
 
-  scene.children.forEach((child) => {
-    child.material.uniforms.intersects.value = 0.0
-  })
-
   const intersects = raycaster.intersectObjects(scene.children)
+  if (intersects.length) {
+    renderer.domElement.classList.add('pointing')
+  } else if (!intersects.length && renderer.domElement.classList.contains('pointing')) {
+    renderer.domElement.classList.remove('pointing')
+  } else if (!intersects.length) {
+    scene.children.forEach((child) => {
+      child.material.uniforms.intersects.value = 0.0
+      child.rotation.x > 0 && (child.rotation.x -= 0.01)
+      child.rotation.y > 0 && (child.rotation.y -= 0.01)
+      child.material.uniforms.millis.value > 0 && (child.material.uniforms.millis.value -= 0.25)
+    })
+  }
   intersects.forEach(({ object, uv }) => {
     object.material.uniforms.mouse.value = uv
     object.material.uniforms.intersects.value = 1.0
+    object.material.uniforms.millis.value += 0.05
+    object.rotation.x = (mouse.y * 0.1)
+    object.rotation.y = (mouse.x * 0.1)
   })
-
-  image && (image.material.uniforms.millis.value = time / 25000)
 
   image && (image.material.uniforms.powerVert.value = controller.powerVert)
   image && (image.material.uniforms.powerR.value = controller.powerR)

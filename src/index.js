@@ -10,6 +10,13 @@ const scene = new THREE.Scene()
 const camera = new THREE.PerspectiveCamera(75, (window.innerWidth / window.innerHeight), 0.1, 1000)
 const raycaster = new THREE.Raycaster()
 
+const text = 'hello world'
+// const text = 'hello world worldorld wodl'
+const div = document.createElement('div')
+div.classList.add('text')
+div.textContent = text
+document.body.appendChild(div)
+
 let image = null
 
 const mouse = new THREE.Vector2()
@@ -65,6 +72,8 @@ loader.load(
 // }
 
 function computeMouse (event) {
+  div.style.left = `${event.clientX - (div.clientWidth / 2)}px`
+  div.style.top = `${event.clientY - (div.clientHeight / 2)}px`
   mouse.x = ((event.clientX / window.innerWidth) * 2) - 1
   mouse.y = -((event.clientY / window.innerHeight) * 2) + 1
 }
@@ -78,6 +87,7 @@ function animate () {
   if (intersects.length) {
     renderer.domElement.classList.add('pointing')
   } else if (!intersects.length && renderer.domElement.classList.contains('pointing')) {
+    div.classList.remove('active')
     renderer.domElement.classList.remove('pointing')
   } else if (!intersects.length) {
     scene.children.forEach((child) => {
@@ -89,6 +99,7 @@ function animate () {
     })
   }
   intersects.forEach(({ object, uv }) => {
+    div.classList.add('active')
     if (object.material.uniforms.millis.value <= object.material.uniforms.maxZ.value) {
       object.material.uniforms.millis.value += 0.05
     }

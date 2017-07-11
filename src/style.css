@@ -1,10 +1,48 @@
 body {
   overflow: hidden;
+  font-family: monospace;
 }
 * {
   margin: 0;
   padding: 0;
 }
 .pointing {
-  cursor: pointer;
+  cursor: none;
+}
+.text {
+  opacity: 0;
+  transition: opacity .3s ease;
+  position: absolute;
+  text-align: center;
+  color: #F1F1F1;
+  background-color: rgba(5, 5, 5, .8);
+  padding: 5px 20px;
+  font-size: 2em;
+  max-width: 300px;
+  pointer-events: none;
+  z-index: 10;
+}
+.text:after {
+  content: '|';
+  font-weight: bold;
+  display: inline-block;
+  position: relative;
+  right: 0;
+  top: -2px;
+  animation: blink 0.7s ease-out infinite alternate;
+}
+.text.active {
+  opacity: 1;
+}
+
+@keyframes blink {
+  0% {
+    opacity: 0;
+  }
+  50% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 1;
+  }
 }

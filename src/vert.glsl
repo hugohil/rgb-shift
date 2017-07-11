@@ -5,10 +5,8 @@ varying vec3 vNormal;
 varying vec3 vPosition;
 
 uniform sampler2D texture;
-uniform vec2 mouse;
 uniform float millis;
-uniform float powerVert;
-uniform float intersects;
+uniform float maxZ;
 
 void main () {
   vPosition = position;
@@ -20,10 +18,8 @@ void main () {
   //convert to grayscale using NTSC conversion weights
   float gray = dot(color.rgb, vec3(.299, .587, .114));
 
-  // vec3 pos = position + normal * (gray * intersects);
   vec3 pos = position + normal * gray;
-  pos.z *= clamp(millis, .0, 15.);
-  // vec3 pos = position + normal;
+  pos.z *= clamp(millis, .0, maxZ);
 
   gl_Position = projectionMatrix * modelViewMatrix * vec4(pos, 1.);
 }
